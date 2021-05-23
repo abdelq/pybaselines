@@ -238,7 +238,7 @@ def padded_convolve(data, kernel, mode='reflect', **pad_kwargs):
     produce edge effects.
 
     """
-    padding = (min(data.shape[0], kernel.shape[0]) // 2)
+    padding = min(data.shape[0], kernel.shape[0]) // 2
     convolution = np.convolve(
         pad_edges(data, padding, mode, **pad_kwargs), kernel, mode='valid'
     )

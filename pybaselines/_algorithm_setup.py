@@ -87,10 +87,10 @@ def _setup_whittaker(data, lam, diff_order=2, weights=None):
     -------
     y : numpy.ndarray, shape (N,)
         The y-values of the measured data, converted to a numpy array.
-    scipy.sparse.dia.dia_matrix
+    scipy.sparse.csr.csr_matrix
         The product of lam * D.T * D, where D is the sparse diagonal matrix of
         the differential, and D.T is the transpose of D.
-    scipy.sparse.dia.dia_matrix
+    scipy.sparse.csr.csr_matrix
         The sparse weight matrix with the weighting array as the diagonal values.
     weight_array : numpy.ndarray, shape (N,), optional
         The weighting array.
@@ -102,7 +102,7 @@ def _setup_whittaker(data, lam, diff_order=2, weights=None):
         weight_array = np.ones(y.shape[0])
     else:
         weight_array = np.asarray(weights).copy()
-    return y, lam * diff_matrix.T * diff_matrix, diags(weight_array), weight_array
+    return y, lam * diff_matrix.T * diff_matrix, diags(weight_array, format='csr'), weight_array
 
 
 def _get_vander(x, poly_order=2, weights=None, calc_pinv=True):
