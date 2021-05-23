@@ -16,6 +16,8 @@ Created on Sept. 13, 2019
 
 """
 
+from itertools import repeat
+
 import numpy as np
 from scipy.sparse import diags
 from scipy.sparse.linalg import spsolve
@@ -76,7 +78,7 @@ def asls(data, lam=1e6, p=1e-2, diff_order=2, max_iter=50, tol=1e-3, weights=Non
     if p < 0 or p > 1:
         raise ValueError('p must be between 0 and 1')
     y, diff_matrix, weight_matrix, weight_array = _setup_whittaker(data, lam, diff_order, weights)
-    for _ in range(max_iter):
+    for _ in repeat(None, max_iter):
         baseline = spsolve(weight_matrix + diff_matrix, weight_array * y, permc_spec=PERMC_SPEC)
         mask = (y > baseline)
         new_weights = p * mask + (1 - p) * (~mask)
@@ -152,7 +154,7 @@ def iasls(data, x_data=None, lam=1e6, p=1e-2, lam_1=1e-4, max_iter=50, tol=1e-3,
     _, diff_matrix, weight_matrix, weight_array = _setup_whittaker(y, lam, 2, weights)
     diff_matrix_1 = difference_matrix(y.shape[0], 1)
     diff_matrix_1 = lam_1 * diff_matrix_1.T * diff_matrix_1
-    for _ in range(max_iter):
+    for _ in repeat(None, max_iter):
         weights_and_d1 = weight_matrix.T * weight_matrix + diff_matrix_1
         baseline = spsolve(weights_and_d1 + diff_matrix, weights_and_d1 * y, permc_spec=PERMC_SPEC)
         mask = (y > baseline)
@@ -262,7 +264,7 @@ def arpls(data, lam=1e5, diff_order=2, max_iter=50, tol=1e-3, weights=None):
 
     """
     y, diff_matrix, weight_matrix, weight_array = _setup_whittaker(data, lam, diff_order, weights)
-    for _ in range(max_iter):
+    for _ in repeat(None, max_iter):
         baseline = spsolve(weight_matrix + diff_matrix, weight_array * y, permc_spec=PERMC_SPEC)
         residual = y - baseline
         neg_mask = residual < 0
@@ -450,7 +452,7 @@ def aspls(data, lam=1e5, diff_order=2, max_iter=50, tol=1e-3, weights=None, alph
         alpha_array = np.asarray(alpha).copy()
     # Use a sparse matrix rather than an array for alpha in order to keep sparcity.
     alpha_matrix = diags(alpha_array, format='csr')
-    for i in range(1, max_iter + 1):
+    for _ in repeat(None, max_iter):
         baseline = spsolve(
             weight_matrix + alpha_matrix * diff_matrix, weight_array * y, permc_spec=PERMC_SPEC
         )
@@ -540,7 +542,7 @@ def psalsa(data, lam=1e5, p=0.5, k=None, diff_order=2, max_iter=50, tol=1e-3, we
     if k is None:
         k = np.std(y) / 10
 
-    for _ in range(max_iter):
+    for _ in repeat(None, max_iter):
         baseline = spsolve(weight_matrix + diff_matrix, weight_array * y, permc_spec=PERMC_SPEC)
         residual = y - baseline
         mask = residual > 0

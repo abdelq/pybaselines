@@ -13,6 +13,7 @@ Created on Feb. 27, 2021
 
 """
 
+from itertools import repeat
 from math import ceil
 
 import numpy as np
@@ -178,7 +179,7 @@ def modpoly(data, x_data=None, poly_order=2, tol=1e-3, max_iter=250, weights=Non
         sqrt_w = np.sqrt(weight_array)
         vander, pseudo_inverse = _get_vander(x, poly_order, sqrt_w)
 
-    for _ in range(max_iter - 1):
+    for _ in repeat(None, max_iter - 1):
         y = np.minimum(y0 if use_original else y, baseline)
         coef = np.dot(pseudo_inverse, sqrt_w * y)
         baseline_new = np.dot(vander, coef)
@@ -275,7 +276,7 @@ def imodpoly(data, x_data=None, poly_order=2, tol=1e-3, max_iter=250, weights=No
         sqrt_w = np.sqrt(weight_array)
         vander, pseudo_inverse = _get_vander(x, poly_order, sqrt_w)
 
-    for _ in range(max_iter - 1):
+    for _ in repeat(None, max_iter - 1):
         y = np.minimum(y0 if use_original else y, baseline + num_std * deviation)
         coef = np.dot(pseudo_inverse, sqrt_w * y)
         baseline = np.dot(vander, coef)
@@ -604,7 +605,7 @@ def penalized_poly(data, x_data=None, poly_order=2, tol=1e-3, max_iter=250,
 
     coef = np.dot(pseudo_inverse, y)
     baseline = np.dot(vander, coef)
-    for _ in range(max_iter):
+    for _ in repeat(None, max_iter):
         coef = np.dot(pseudo_inverse, y + loss_function(y - sqrt_w * baseline, **loss_kwargs))
         baseline_new = np.dot(vander, coef)
 

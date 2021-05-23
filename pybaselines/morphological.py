@@ -14,6 +14,8 @@ Created on March 5, 2021
 
 """
 
+from itertools import repeat
+
 import numpy as np
 from scipy.ndimage import grey_closing, grey_dilation, grey_erosion, grey_opening, uniform_filter1d
 from scipy.sparse.linalg import spsolve
@@ -325,7 +327,7 @@ def imor(data, half_window=None, tol=1e-3, max_iter=200, **window_kwargs):
     """
     y, half_wind = _setup_morphology(data, half_window, **window_kwargs)
     baseline = np.minimum(y, _avg_opening(y, half_wind))
-    for _ in range(max_iter - 1):
+    for _ in repeat(None, max_iter - 1):
         baseline_new = np.minimum(y, _avg_opening(baseline, half_wind))
         if relative_difference(baseline, baseline_new) < tol:
             break
@@ -397,7 +399,7 @@ def amormol(data, half_window=None, tol=1e-3, max_iter=200, pad_kwargs=None, **w
     pad_kws = pad_kwargs if pad_kwargs is not None else {}
     y = pad_edges(y, window_size, **pad_kws)
     baseline = y
-    for _ in range(max_iter):
+    for _ in repeat(None, max_iter):
         baseline_new = padded_convolve(
             np.minimum(
                 y,
@@ -482,7 +484,7 @@ def mormol(data, half_window=None, tol=1e-3, max_iter=250, smooth_half_window=No
     pad_kws = pad_kwargs if pad_kwargs is not None else {}
     y = pad_edges(y, window_size, **pad_kws)
     baseline = np.zeros(y.shape[0])
-    for _ in range(max_iter):
+    for _ in repeat(None, max_iter):
         y_smooth = padded_convolve(y - baseline, smooth_kernel)
         baseline_new = baseline + padded_convolve(grey_erosion(y_smooth, window_size), kernel)
         if relative_difference(baseline[data_bounds], baseline_new[data_bounds]) < tol:
